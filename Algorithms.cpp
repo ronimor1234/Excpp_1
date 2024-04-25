@@ -91,7 +91,7 @@ namespace ariel {
         }
 
         if (prev[static_cast<IndexType>(end)] == -1) {
-            return "No path found"; // No valid path exists
+            return "-1 (No path found)"; // No valid path exists
         }
 
         std::vector<IndexType> pathIndices;
@@ -111,42 +111,59 @@ namespace ariel {
 
         return oss.str(); // Return the formatted path
     }
-    // Helper function for DFS-based cycle detection
-    bool isCycleDFS(const std::vector<std::vector<int>>& adj, std::vector<bool>& visited, std::vector<bool>& recStack, std::vector<int>::size_type node) {
-        if (recStack[node]) { // Check if node is in recursion stack
+
+    // DFS-based cycle detection for undirected and directed graphs
+    bool isCycleDFS(const std::vector<std::vector<int>>& adj, std::vector<bool>& visited, std::vector<bool>& recStack, std::vector<int>& path, std::vector<int>::size_type node, std::vector<int>::size_type parent, std::string& cycleStr, bool isUndirected) {
+        if (recStack[node] && (!isUndirected || node != parent)) { // Check recursion stack for cycle
+            // Find the cycle path
+            auto it = std::find(path.begin(), path.end(), node);
+            cycleStr = "The cycle is: ";
+            while (it != path.end()) {
+                cycleStr += std::to_string(*it) + "->"; // Append cycle nodes
+                ++it;
+            }
+            cycleStr += std::to_string(*path.begin()); // Complete the loop
             return true; // Cycle detected
         }
 
-        if (visited[node]) { // If already visited, no cycle from this node
+        if (visited[node]) { // Already visited, no cycle
             return false;
         }
 
-        visited[node] = true; // Mark node as visited
-        recStack[node] = true; // Add node to recursion stack
+        // Mark as visited and add to recursion stack
+        visited[node] = true;
+        recStack[node] = true;
+        path.push_back(node);
 
-        // Check all adjacent nodes
+        // Traverse adjacent nodes
         for (std::vector<int>::size_type i = 0; i < adj[node].size(); ++i) {
-            if (adj[node][i] == 1) { // If there's an edge
-                if (isCycleDFS(adj, visited, recStack, i)) { // Recursive check
-                    return true;
+            if (adj[node][i] > 0 && (isUndirected ? i != parent : true)) { // Valid edge
+                if (isCycleDFS(adj, visited, recStack, path, i, node, cycleStr, isUndirected)) {
+                    return true; // Cycle detected
                 }
             }
         }
 
         recStack[node] = false; // Remove from recursion stack
+        path.pop_back(); // Pop from the path
         return false; // No cycle detected
     }
 
+    // Function to check if the graph contains a cycle and print it if found
     bool Algorithms::isContainsCycle(const Graph& g) {
-        const auto& adj = g.getAdjMatrix();
+        const auto& adj = g.getAdjMatrix(); // Get adjacency matrix
         std::vector<bool> visited(adj.size(), false); // Track visited nodes
-        std::vector<bool> recStack(adj.size(), false); // Track recursion stack
+        std::vector<bool> recStack(adj.size(), false); // Recursion stack for cycle detection
+        std::vector<int> path; // Track current recursion path
+        std::string cycleStr; // Store the cycle description
+        bool isUndirected = g.isUndirectedGraph(); // Determine if the graph is undirected
 
         // Check for cycles starting from each node
         for (std::vector<int>::size_type start = 0; start < adj.size(); ++start) {
-            if (!visited[start]) {
-                if (isCycleDFS(adj, visited, recStack, start)) {
-                    return true; // If any node leads to a cycle
+            if (!visited[start]) { // If not visited, start DFS
+                if (isCycleDFS(adj, visited, recStack, path, start, std::numeric_limits<std::vector<int>::size_type>::max(), cycleStr, isUndirected)) {
+                    std::cout << cycleStr << ". so it is:"; // Print the detected cycle
+                    return true; // Cycle detected
                 }
             }
         }
@@ -177,7 +194,7 @@ namespace ariel {
                                 colors[j] = 1 - colors[node]; // Flip color
                                 q.push(j);
                             } else if (colors[j] == colors[node]) { // Same color as parent
-                                return "Graph is not bipartite";
+                                return "0 (Graph is not bipartite)";
                             }
                         }
                     }
@@ -190,13 +207,21 @@ namespace ariel {
 
         for (IndexType i = 0; i < numVertices; ++i) {
             if (colors[i] == 0) {
-                group1 += std::to_string(i) + " ";
+                group1 += std::to_string(i) + ",";
             } else if (colors[i] == 1) {
-                group2 += std::to_string(i) + " ";
+                group2 += std::to_string(i) + ",";
             }
         }
 
-        result = "Graph is bipartite. Group 1: " + group1 + "Group 2: " + group2;
+        // Remove the trailing commas
+        if (!group1.empty() && group1.back() == ',') {
+            group1.pop_back();
+        }
+        if (!group2.empty() && group2.back() == ',') {
+            group2.pop_back();
+        }
+
+        result = "The graph is bipartite: A={" + group1 + "}, B={" + group2 + "}";
         return result;
     }
 
