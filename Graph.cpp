@@ -4,84 +4,84 @@
 
 namespace ariel {
 
-    // Default constructor for an empty graph
+    // Default constructor for an empty graph with no vertices
     Graph::Graph() : adjMatrix(0, std::vector<int>(0)), isUndirected(true) {}
 
-    // Constructor with validation
+    // Constructor to initialize a graph with a given adjacency matrix
     Graph::Graph(const std::vector<std::vector<int>>& matrix) {
         validateMatrix(matrix); // Validate that the matrix is square
-        adjMatrix = matrix; // Assign the matrix to the graph
-        isUndirected = isSymmetric(matrix); // Determine if the graph is undirected
+        adjMatrix = matrix; // Assign the provided matrix to the graph
+        isUndirected = isSymmetric(matrix); // Determine if the graph is undirected or directed
     }
 
-    // Validate if the matrix is square, throws an exception if not
+    // Validates that the given adjacency matrix is square
     void Graph::validateMatrix(const std::vector<std::vector<int>>& matrix) const {
-        size_t rowCount = matrix.size();
+        size_t rowCount = matrix.size(); // Get the number of rows
         for (const auto& row : matrix) {
-            if (row.size() != rowCount) { // Ensure each row has the same length
+            if (row.size() != rowCount) { // Ensure each row has the same number of columns
                 throw std::invalid_argument("Invalid graph: The graph is not a square matrix.");
             }
         }
     }
 
-    // Check if the adjacency matrix is symmetric
+    // Checks if the adjacency matrix is symmetric, indicating an undirected graph
     bool Graph::isSymmetric(const std::vector<std::vector<int>>& matrix) const {
         size_t size = matrix.size();
-        for (size_t i = 0; i < size; i++) {
-            for (size_t j = 0; j < size; j++) {
-                if (matrix[i][j] != matrix[j][i]) { // Not symmetric
-                    return false;
+        for (size_t i = 0; i < size; i++) { // Iterate through the rows
+            for (size_t j = 0; j < size; j++) { // Iterate through the columns
+                if (matrix[i][j] != matrix[j][i]) { // If the matrix is not symmetric
+                    return false; // It's a directed graph
                 }
             }
         }
-        return true; // Symmetric
+        return true; // If symmetric, it's an undirected graph
     }
 
-    // Load a new graph with validation and determine if it is undirected
+    // Loads a new adjacency matrix into the graph, with validation
     void Graph::loadGraph(const std::vector<std::vector<int>>& newMatrix) {
-        validateMatrix(newMatrix); // Ensure the matrix is square
-        adjMatrix = newMatrix; // If valid, assign the new matrix
-        isUndirected = isSymmetric(newMatrix); // Determine if the graph is undirected
+        validateMatrix(newMatrix); // Validate the matrix is square
+        adjMatrix = newMatrix; // Assign the new matrix to the graph
+        isUndirected = isSymmetric(newMatrix); // Determine if the graph is undirected or directed
     }
 
-    // Method to determine if the graph is undirected
+    // Determines if the graph is undirected
     bool Graph::isUndirectedGraph() const {
-        return isUndirected; // Return the status of the graph
+        return isUndirected; // Return whether the graph is undirected
     }
 
-    // Corrected printGraph function for undirected graphs
+    // Prints the number of vertices and edges in the graph
     void Graph::printGraph() const {
-        size_t vertices = adjMatrix.size();
+        size_t vertices = adjMatrix.size(); // Get the number of vertices
         int edges = 0;
 
+        // Check if the graph is undirected or directed
         if (isUndirected) {
-            // Count only unique edges (upper triangle)
+            // For undirected graphs, count only unique edges (upper triangle)
             for (size_t i = 0; i < vertices; i++) {
-                for (size_t j = i + 1; j < vertices; j++) { // Only consider edges in the upper triangle
-                    if (adjMatrix[i][j] > 0) { // If there's an edge
+                for (size_t j = i + 1; j < vertices; j++) { // Only count edges in the upper triangle
+                    if (adjMatrix[i][j] != 0) { // Count any non-zero edge
                         edges++;
                     }
                 }
             }
         } else {
-            // Count all edges for directed graphs
-            for (const auto& row : adjMatrix) {
-                for (int value : row) {
-                    if (value > 0) { // Consider any positive value as an edge
+            // For directed graphs, count all non-zero edges
+            for (const auto& row : adjMatrix) { // Loop through all rows
+                for (int value : row) { // Loop through all columns
+                    if (value != 0) { // Count any non-zero edge
                         edges++;
                     }
                 }
             }
         }
 
+        // Output the number of vertices and edges in the graph
         std::cout << "Graph with " << vertices << " vertices and " << edges << " edges." << std::endl;
     }
 
-    // Implementation of getAdjMatrix with class scope
+    // Returns the adjacency matrix of the graph
     const std::vector<std::vector<int>>& Graph::getAdjMatrix() const {
         return adjMatrix; // Return the adjacency matrix
     }
 
 }
-
-

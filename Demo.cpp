@@ -17,20 +17,28 @@ int main()
 {
     ariel::Graph g;
     // 3x3 matrix that represents a connected graph.
-    vector<vector<int>> graph = {
+    // this matrix is symmetrical so its will be undirected graph.
+    std::cout << "Test to graph1:" << endl;
+    vector<vector<int>> graph1 = {
         {0, 1, 0},
         {1, 0, 1},
         {0, 1, 0}};
-    g.loadGraph(graph); // Load the graph to the object.
+    g.loadGraph(graph1); // Load the graph to the object.
 
     g.printGraph();                                    // Should print: "Graph with 3 vertices and 2 edges."
+    std::cout << "isConnected: ";
     cout << Algorithms::isConnected(g) << endl;        // Should print: "1" (true).
+    std::cout << "shortestPath: ";
     cout << Algorithms::shortestPath(g, 0, 2) << endl; // Should print: 0->1->2.
+    std::cout << "isContainsCycle: ";
     cout << Algorithms::isContainsCycle(g) << endl;    // Should print: "0" (false).
+    std::cout << "isBipartite: ";
     cout << Algorithms::isBipartite(g) << endl;        // Should print: "The graph is bipartite: A={0, 2}, B={1}."
     std::cout << "\n";
 
     // 5x5 matrix that represents a non-connected graph with a cycle.
+    // this matrix is symmetrical so its will be undirected graph.
+    std::cout << "Test to graph2:" << endl;
     vector<vector<int>> graph2 = {
         {0, 1, 1, 0, 0},
         {1, 0, 1, 0, 0},
@@ -41,13 +49,19 @@ int main()
     g.loadGraph(graph2); // Load the graph to the object.
 
     g.printGraph();                                    // Should print: "Graph with 5 vertices and 4 edges."
+    std::cout << "isConnected: ";
     cout << Algorithms::isConnected(g) << endl;        // Should print: "0" (false).
+    std::cout << "shortestPath: ";
     cout << Algorithms::shortestPath(g, 0, 4) << endl; // Should print: "-1" (there is no path between 0 and 4).
+    std::cout << "isContainsCycle: ";
     cout << Algorithms::isContainsCycle(g) << endl;    // Should print: "The cycle is: 0->1->2->0".
+    std::cout << "isBipartite: ";
     cout << Algorithms::isBipartite(g) << endl;        // Should print: "0" (false).
     std::cout << "\n";
 
     // 5x5 matrix that reprsents a connected weighted graph.
+    // this matrix is symmetrical so its will be undirected graph.
+    std::cout << "Test to graph3:" << endl;
     vector<vector<int>> graph3 = {
         {0, 1, 2, 0, 0},
         {1, 0, 3, 0, 0},
@@ -57,30 +71,20 @@ int main()
     g.loadGraph(graph3); // Load the graph to the object.
 
     g.printGraph();                                    // Should print: "Graph with 5 vertices and 5 edges."
+    std::cout << "isConnected: ";
     cout << Algorithms::isConnected(g) << endl;        // Should print: "1" (true).
+    std::cout << "shortestPath: ";
     cout << Algorithms::shortestPath(g, 0, 4) << endl; // Should print: 0->2->3->4.
+    std::cout << "isContainsCycle: ";
     cout << Algorithms::isContainsCycle(g) << endl;    // Should print: "The cycle is: 0->1->2->0."
-    cout << Algorithms::isBipartite(g) << endl;        // Should print: "The graph is not bipartite: 0" there is odd cycle
-    std::cout << "\n";
-
-    //my demo test:
-    // 4x4 matrix that reprsents a unsymmetry matrix 
-    vector<vector<int>> graph4 = {
-        {0, 1, 0, 10},
-        {1, 0, 1, 2},
-        {0, 2, 0, 0},
-        {0, 1, 0, 0}};
-    g.loadGraph(graph4); // Load the graph to the object.
-    g.printGraph();                                    // Should print: "Graph with 4 vertices and 7 edges."
-    cout << Algorithms::isConnected(g) << endl;
-    cout << Algorithms::shortestPath(g, 0, 3) << endl;
-    cout << Algorithms::isContainsCycle(g) << endl;
-    cout << Algorithms::isBipartite(g) << endl;
-    cout << Algorithms::negativeCycle(g) << endl;
+    std::cout << "isBipartite: ";
+    cout << Algorithms::isBipartite(g) << endl;        // Should print: "The graph is not bipartite: 0" there is odd cycle.
     std::cout << "\n";
 
     // 5x4 matrix that reprsents invalid graph.
-    vector<vector<int>> graph5 = {
+    // this matrix is symmetrical so its will be undirected graph.
+    std::cout << "Test to graph4:" << endl;
+    vector<vector<int>> graph4 = {
         {0, 1, 2, 0},
         {1, 0, 3, 0},
         {2, 3, 0, 4},
@@ -88,10 +92,101 @@ int main()
         {0, 0, 0, 5}};
     try
     {
-        g.loadGraph(graph5); // Load the graph to the object.
+        g.loadGraph(graph4); // Load the graph to the object.
     }
     catch (const std::invalid_argument &e)
     {
         cout << e.what() << endl; // Should print: "Invalid graph: The graph is not a square matrix."
     }
+    std::cout << "\n";
+    //my demo test:
+
+    // 5x5 matrix that reprsents a connected with negative weighted graph.
+    // this matrix is symmetrical so its will be undirected graph.
+    std::cout << "Test to graph5:" << endl;
+    vector<vector<int>> graph5 = {
+        {0, 1, 2, 0, 0},
+        {1, 0, -1, 0, 0},
+        {2, -1, 0, 4, 0},
+        {0, 0, 4, 0, 5},
+        {0, 0, 0, 5, 0}};
+    g.loadGraph(graph5); // Load the graph to the object.
+
+    g.printGraph();                                    // Should print: "Graph with 5 vertices and 5 edges."
+    std::cout << "isConnected: ";
+    cout << Algorithms::isConnected(g) << endl;        // Should print: "1" (true).
+    std::cout << "shortestPath: ";
+    cout << Algorithms::shortestPath(g, 0, 3) << endl; // Should print: 0->1->2->3. *i have a problem here*
+    std::cout << "isContainsCycle: ";
+    cout << Algorithms::isContainsCycle(g) << endl;    // Should print: "The cycle is: 0->1->2->0."
+    std::cout << "isBipartite: ";
+    cout << Algorithms::isBipartite(g) << endl;        // Should print: "The graph is not bipartite: 0" there is odd cycle.
+    std::cout << "\n";
+
+    // 4x4 matrix that reprsents a unsymmetry matrix so its directed graph. 
+    std::cout << "Test to graph6:" << endl;
+    vector<vector<int>> graph6 = {
+        {0, 1, 0, 10},
+        {1, 0, 1, 2},
+        {0, 2, 0, 0},
+        {0, 1, 0, 0}};
+    g.loadGraph(graph6); // Load the graph to the object.
+    g.printGraph();                                    // Should print: "Graph with 4 vertices and 7 edges."
+    std::cout << "isConnected: ";
+    cout << Algorithms::isConnected(g) << endl;        // Should print: "1" (true).
+    std::cout << "shortestPath: ";
+    cout << Algorithms::shortestPath(g, 0, 3) << endl;  // Should print: 0->1->3
+    std::cout << "isContainsCycle: ";
+    cout << Algorithms::isContainsCycle(g) << endl;    // Should print: "the cycle is: 0->1->0. so it is :1"
+    std::cout << "isBipartite: ";
+    cout << Algorithms::isBipartite(g) << endl;        // Should print: "0"
+    std::cout << "negativeCycle: ";
+    cout << Algorithms::negativeCycle(g) << endl;      // Should print: "Graph contain a negative cycle"
+    std::cout << "\n";
+
+    // 5x5 matrix that reprsents a connected with negative weighted graph.
+    // this graph contain negative cycle. 
+    std::cout << "Test to graph7:" << endl;
+    vector<vector<int>> graph7 = {
+        {0, 1, -2, 0, 0},
+        {1, 0, -1, 0, 0},
+        {-2, -1, 0, 4, 0},
+        {0, 0, 4, 0, 5},
+        {0, 0, 0, 5, 0}};
+    g.loadGraph(graph7); // Load the graph to the object.
+    g.printGraph();                                    // Should print: "Graph with 5 vertices and 5 edges."
+    std::cout << "isConnected: ";
+    cout << Algorithms::isConnected(g) << endl;        // Should print: "1" (true).
+    std::cout << "shortestPath: ";
+    cout << Algorithms::shortestPath(g, 0, 3) << endl;  // Should print: 0->1->3
+    std::cout << "isContainsCycle: ";
+    cout << Algorithms::isContainsCycle(g) << endl;    // Should print: "the cycle is: 0->1->0. so it is :1"
+    std::cout << "isBipartite: ";
+    cout << Algorithms::isBipartite(g) << endl;        // Should print: "0"
+    std::cout << "negativeCycle: ";
+    cout << Algorithms::negativeCycle(g) << endl;      // Should print: "Graph foes not contain a negative cycle"
+    std::cout << "\n";
+
+    // 5x5 matrix that reprsents a connected with negative weighted graph.
+    // this graph contain negative cycle. 
+    std::cout << "Test to graph8:" << endl;
+    vector<vector<int>> graph8 = {
+        {0, 1, 2, 0, 1},
+        {1, 0, -1, 0, 0},
+        {2, -1, 0, 4, 0},
+        {0, 0, 4, 0, 5},
+        {1, 0, 0, 5, 0}};
+    g.loadGraph(graph8); // Load the graph to the object.
+    g.printGraph();                                    // Should print: "Graph with 5 vertices and 5 edges."
+    std::cout << "isConnected: ";
+    cout << Algorithms::isConnected(g) << endl;        // Should print: "1" (true).
+    std::cout << "shortestPath: ";
+    cout << Algorithms::shortestPath(g, 0, 3) << endl;  // Should print: 0->1->3
+    std::cout << "isContainsCycle: ";
+    cout << Algorithms::isContainsCycle(g) << endl;    // Should print: "the cycle is: 0->1->0. so it is :1"
+    std::cout << "isBipartite: ";
+    cout << Algorithms::isBipartite(g) << endl;        // Should print: "0"
+    std::cout << "negativeCycle: ";
+    cout << Algorithms::negativeCycle(g) << endl;      // Should print: "Graph foes not contain a negative cycle"
+    std::cout << "\n";
 }

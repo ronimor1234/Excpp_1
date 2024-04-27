@@ -15,7 +15,7 @@ namespace ariel {
         static std::string shortestPath(const Graph& g, int start, int end);
 
         // Check if a graph contains a cycle
-        static bool isContainsCycle(const Graph& g);
+        static std::string isContainsCycle(const Graph& g);
 
         // Determine if a graph is bipartite
         static std::string isBipartite(const Graph& g);

@@ -55,64 +55,78 @@ namespace ariel {
         return true; // All vertices visited, graph is connected
     }
 
-    // Function to find the shortest path between two vertices in an adjacency matrix
     std::string Algorithms::shortestPath(const Graph& g, int start, int end) {
         const auto& adj = g.getAdjMatrix();
-        IndexType numVertices = adj.size();
+        auto numVertices = adj.size();  // Use correct unsigned type
 
+        // Validate indices
         if (start < 0 || start >= static_cast<int>(numVertices) ||
             end < 0 || end >= static_cast<int>(numVertices)) {
             throw std::out_of_range("Invalid vertex index.");
         }
 
-        // Initialization for BFS
+        using IndexType = std::vector<int>::size_type; // Proper unsigned type
         std::vector<int> prev(numVertices, -1); // Previous nodes for path reconstruction
-        std::vector<bool> visited(numVertices, false); // To track visited nodes
-        std::queue<IndexType> q;
-        q.push(static_cast<IndexType>(start)); // Correctly cast to IndexType
-        visited[static_cast<IndexType>(start)] = true; // Correctly cast to IndexType
+        std::vector<double> distances(numVertices, std::numeric_limits<double>::max()); // Correct initialization
+        distances[static_cast<IndexType>(start)] = 0; // Start at source vertex
 
-        while (!q.empty()) {
-            auto node = q.front();
-            q.pop();
-
-            if (node == static_cast<IndexType>(end)) {
-                break;
-            }
-
-            // Explore neighbors
-            for (IndexType i = 0; i < adj[node].size(); ++i) {
-                if (adj[node][i] && !visited[i]) { // Only unvisited nodes
-                    prev[i] = static_cast<int>(node); // Mark previous node
-                    visited[i] = true; // Mark as visited
-                    q.push(i); // Add to the queue for further exploration
+        // Bellman-Ford algorithm
+        for (IndexType k = 0; k < numVertices - 1; ++k) { // Correct number of iterations
+            for (IndexType i = 0; i < numVertices; ++i) { // Loop through all vertices
+                for (IndexType j = 0; j < numVertices; ++j) { // Loop through all edges
+                    if (adj[i][j] != 0 && distances[i] < std::numeric_limits<double>::max()) { // Valid edge check
+                        double newDist = distances[i] + adj[i][j]; // Calculate new distance
+                        if (newDist < distances[j]) { // Correct relaxation logic
+                            distances[j] = newDist;
+                            prev[j] = static_cast<int>(i); // Correct predecessor update
+                        }
+                    }
                 }
             }
         }
 
-        if (prev[static_cast<IndexType>(end)] == -1) {
-            return "-1 (No path found)"; // No valid path exists
-        }
-
-        std::vector<IndexType> pathIndices;
-        for (IndexType at = static_cast<IndexType>(end); at != static_cast<IndexType>(-1); at = static_cast<IndexType>(prev[at])) {
-            pathIndices.push_back(at);
-        }
-
-        std::reverse(pathIndices.begin(), pathIndices.end()); // Reverse path to start-to-end
-
-        std::ostringstream oss;
-        for (IndexType i = 0; i < pathIndices.size(); ++i) {
-            if (i > 0) {
-                oss << "->"; // Path separator
+        // Check for negative cycles
+        for (IndexType i = 0; i < numVertices; ++i) {
+            for (IndexType j = 0; j < numVertices; ++j) {
+                if (adj[i][j] != 0 && distances[i] < std::numeric_limits<double>::max()) {
+                    double newDist = distances[i] + adj[i][j];
+                    if (newDist < distances[j]) { // Proper cycle detection logic
+                        return "Negative cycle detected between " + std::to_string(i) + " and " + std::to_string(j);
+                    }
+                }
             }
-            oss << pathIndices[i]; // Node index in the path
         }
 
-        return oss.str(); // Return the formatted path
-    }
+        // Check if there's a valid path
+        if (prev[static_cast<IndexType>(end)] == -1) {
+            return "-1"; // Handle invalid path
+        }
 
-    // DFS-based cycle detection for undirected and directed graphs
+        // Reconstruct the path
+        std::vector<IndexType> pathIndices;
+            for (IndexType at = static_cast<IndexType>(end); at != std::numeric_limits<IndexType>::max(); at = static_cast<IndexType>(prev[at])) {
+                pathIndices.push_back(at); // Collect path
+            }
+
+        std::reverse(pathIndices.begin(), pathIndices.end()); // Correct path order
+
+        // Convert to human-readable path
+        std::ostringstream oss;
+            for (IndexType i = 0; i < pathIndices.size(); ++i) {
+                if (i > 0) {
+                    oss << "->";
+                }
+                oss << pathIndices[i];
+            }
+
+            return oss.str(); // Return the final path
+        }
+
+    
+    
+    
+    // // DFS-based cycle detection for undirected and directed graphs
+
     bool isCycleDFS(const std::vector<std::vector<int>>& adj, std::vector<bool>& visited, std::vector<bool>& recStack, std::vector<int>& path, std::vector<int>::size_type node, std::vector<int>::size_type parent, std::string& cycleStr, bool isUndirected) {
         if (recStack[node] && (!isUndirected || node != parent)) { // Check recursion stack for cycle
             // Find the cycle path
@@ -148,29 +162,25 @@ namespace ariel {
         path.pop_back(); // Pop from the path
         return false; // No cycle detected
     }
-
-    // Function to check if the graph contains a cycle and print it if found
-    bool Algorithms::isContainsCycle(const Graph& g) {
-        const auto& adj = g.getAdjMatrix(); // Get adjacency matrix
-        std::vector<bool> visited(adj.size(), false); // Track visited nodes
-        std::vector<bool> recStack(adj.size(), false); // Recursion stack for cycle detection
+    std::string Algorithms::isContainsCycle(const Graph& g) {
+        const auto& adj = g.getAdjMatrix();
+        std::vector<bool> visited(adj.size(), false);
+        std::vector<bool> recStack(adj.size(), false);
         std::vector<int> path; // Track current recursion path
-        std::string cycleStr; // Store the cycle description
+        std::string cycleStr; // String to store the detected cycle
         bool isUndirected = g.isUndirectedGraph(); // Determine if the graph is undirected
 
-        // Check for cycles starting from each node
         for (std::vector<int>::size_type start = 0; start < adj.size(); ++start) {
             if (!visited[start]) { // If not visited, start DFS
                 if (isCycleDFS(adj, visited, recStack, path, start, std::numeric_limits<std::vector<int>::size_type>::max(), cycleStr, isUndirected)) {
-                    std::cout << cycleStr << ". so it is:"; // Print the detected cycle
-                    return true; // Cycle detected
+                    return cycleStr; // Return the cycle description
                 }
             }
         }
 
-        return false; // No cycles found
+        return "0"; // No cycles found
     }
-
+    
     std::string Algorithms::isBipartite(const Graph& g) {
         const auto& adj = g.getAdjMatrix();
         IndexType numVertices = adj.size();
@@ -194,7 +204,7 @@ namespace ariel {
                                 colors[j] = 1 - colors[node]; // Flip color
                                 q.push(j);
                             } else if (colors[j] == colors[node]) { // Same color as parent
-                                return "0 (Graph is not bipartite)";
+                                return "0";
                             }
                         }
                     }
@@ -224,6 +234,7 @@ namespace ariel {
         result = "The graph is bipartite: A={" + group1 + "}, B={" + group2 + "}";
         return result;
     }
+
 
     std::string Algorithms::negativeCycle(const Graph& g) {
         const auto& adj = g.getAdjMatrix();
