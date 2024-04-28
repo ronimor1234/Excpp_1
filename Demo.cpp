@@ -121,6 +121,8 @@ int main()
     cout << Algorithms::isContainsCycle(g) << endl;    // Should print: "The cycle is: 0->1->2->0."
     std::cout << "isBipartite: ";
     cout << Algorithms::isBipartite(g) << endl;        // Should print: "The graph is not bipartite: 0" there is odd cycle.
+    std::cout << "negativeCycle: ";
+    cout << Algorithms::negativeCycle(g) << endl; 
     std::cout << "\n";
 
     // 4x4 matrix that reprsents a unsymmetry matrix so its directed graph. 
@@ -171,9 +173,9 @@ int main()
     // this graph contain negative cycle. 
     std::cout << "Test to graph8:" << endl;
     vector<vector<int>> graph8 = {
-        {0, 1, 2, 0, 1},
-        {1, 0, -1, 0, 0},
-        {2, -1, 0, 4, 0},
+        {0, -1, 2, 0, 1},
+        {-1, 0, 1, 0, 0},
+        {2, 1, 0, 4, 0},
         {0, 0, 4, 0, 5},
         {1, 0, 0, 5, 0}};
     g.loadGraph(graph8); // Load the graph to the object.
@@ -189,4 +191,35 @@ int main()
     std::cout << "negativeCycle: ";
     cout << Algorithms::negativeCycle(g) << endl;      // Should print: "Graph foes not contain a negative cycle"
     std::cout << "\n";
+
+    // 5x5 matrix that reprsents a connected with negative weighted graph.
+    // this graph contain negative cycle. 
+    std::cout << "Test to graph9:" << endl;
+    vector<vector<int>> graph9 = {
+       {0, -1, 1, 0, -3},
+        {1, 0, 1, 0, 0},
+        {1, -1, 0, -1, 0},
+        {0, 0, 1, 0, 0},
+        {-2, 0, 0, 0, -10}};
+    g.loadGraph(graph9); // Load the graph to the object.
+    g.printGraph();                                    // Should print: "Graph with 5 vertices and 5 edges."
+    std::cout << "isConnected: ";
+    cout << Algorithms::isConnected(g) << endl;        // Should print: "1" (true).
+    std::cout << "shortestPath: ";
+    cout << Algorithms::shortestPath(g, 0, 3) << endl;  // Should print: 0->1->3
+    std::cout << "isContainsCycle: ";
+    cout << Algorithms::isContainsCycle(g) << endl;    // Should print: "the cycle is: 0->1->0. so it is :1"
+    std::cout << "isBipartite: ";
+    cout << Algorithms::isBipartite(g) << endl;        // Should print: "0"
+    std::cout << "negativeCycle: ";
+    cout << Algorithms::negativeCycle(g) << endl;      // Should print: "Graph foes not contain a negative cycle"
+    std::cout << "\n";
+
+    vector<vector<int>> graph10 = {
+      {0, -2, 3},
+        {1, 0, -1},
+        {0, 2, 0}};
+    g.loadGraph(graph10); // Load the graph to the object.
+    g.printGraph();
+    cout << Algorithms::negativeCycle(g) << endl;
 }
