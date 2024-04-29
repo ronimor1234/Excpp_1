@@ -222,137 +222,146 @@ TEST_CASE("Test isContainsCycle")
 
     //Graph with mixed positive and negative edges in unsymatrical matrix.
     std::vector<std::vector<int>> graph24 = {
-        {0, 1, 3, 0},
+        {0, 1, -3, 0},
         {1, 0, -2, 0},
-        {3, -2, 0, 1},
+        {-3, -2, 0, 1},
         {-10, 0, 1, 0}};
     g.loadGraph(graph24);
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "The cycle is: 0->1->0"); // Cycle with mixed edges
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "The cycle is: 0->1->0"); 
+
+    //Graph with all negative edges in unsymatrical matrix, so in this case it will be 0.
+    std::vector<std::vector<int>> graph25 = {
+        {0, -1, -3, 0},
+        {-1, 0, -2, 0},
+        {-3, -2, 0, -1},
+        {-10, 0, -1, 0}};
+    g.loadGraph(graph25);
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "0");
 }
 TEST_CASE("Test isBipartite")
 {
     ariel::Graph g;
-    vector<vector<int>> graph25 = {
+    vector<vector<int>> graph26 = {
         {0, 1, 0},
         {1, 0, 1},
         {0, 1, 0}};
-    g.loadGraph(graph25);
+    g.loadGraph(graph26);
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0,2}, B={1}");
 
-    vector<vector<int>> graph26 = {
+    vector<vector<int>> graph27 = {
         {0, 1, 1, 0, 0},
         {1, 0, 1, 0, 0},
         {1, 1, 0, 1, 0},
         {0, 0, 1, 0, 0},
         {0, 0, 0, 0, 0}};
-    g.loadGraph(graph26);
+    g.loadGraph(graph27);
     CHECK(ariel::Algorithms::isBipartite(g) == "0");
 
-    vector<vector<int>> graph27 = {
+    vector<vector<int>> graph28 = {
         {0, 1, 2, 0, 0},
         {1, 0, 3, 0, 0},
         {2, 3, 0, 4, 0},
         {0, 0, 4, 0, 5},
         {0, 0, 0, 5, 0}};
-    g.loadGraph(graph27);
+    g.loadGraph(graph28);
     CHECK(ariel::Algorithms::isBipartite(g) == "0");
 
     //my test to this function
     //Non-bipartite graph with odd-length cycle
-    std::vector<std::vector<int>> graph28 = {
+    std::vector<std::vector<int>> graph29 = {
         {0, 1, 1, 0},
         {1, 0, 1, 1},
         {1, 1, 0, 0},
         {0, 1, 0, 0}};
-    g.loadGraph(graph28);
+    g.loadGraph(graph29);
     CHECK(ariel::Algorithms::isBipartite(g) == "0");
 
     // Test 3: Larger bipartite graph
-    std::vector<std::vector<int>> graph29 = {
+    std::vector<std::vector<int>> graph30 = {
         {0, 1, 0, 0},
         {1, 0, 1, 0},
         {0, 1, 0, 1},
         {0, 0, 1, 0}};
-    g.loadGraph(graph29);
+    g.loadGraph(graph30);
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0,2}, B={1,3}");
 
     //Graph with no edges (trivially bipartite)
-    std::vector<std::vector<int>> graph30 = {
+    std::vector<std::vector<int>> graph31 = {
         {0, 0, 0},
         {0, 0, 0},
         {0, 0, 0}};
-    g.loadGraph(graph30);
+    g.loadGraph(graph31);
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0,1,2}, B={}"); // No edges, trivially bipartite
 
     //Graph with negative weights (should not affect bipartite property)
-    std::vector<std::vector<int>> graph31 = {
+    std::vector<std::vector<int>> graph32 = {
         {0, -1, 0},
         {-1, 0, 1},
         {0, 1, 0}};
-    g.loadGraph(graph31);
+    g.loadGraph(graph32);
     CHECK(ariel::Algorithms::isBipartite(g) == "The graph is bipartite: A={0,2}, B={1}"); // Bipartite even with negative edges
 }
 TEST_CASE("Test invalid graph")
 {
     ariel::Graph g;
-    vector<vector<int>> graph32 = {
-        {0, 1, 2, 0},
-        {1, 0, 3, 0},
-        {2, 3, 0, 4},
-        {0, 0, 4, 0},
-        {0, 0, 0, 5}};
-    CHECK_THROWS(g.loadGraph(graph32));
-
-    //my test to this function
-    //Non-square matrix (invalid graph)
     vector<vector<int>> graph33 = {
         {0, 1, 2, 0},
         {1, 0, 3, 0},
         {2, 3, 0, 4},
         {0, 0, 4, 0},
+        {0, 0, 0, 5}};
+    CHECK_THROWS(g.loadGraph(graph33));
+
+    //my test to this function
+    //Non-square matrix (invalid graph)
+    vector<vector<int>> graph34 = {
+        {0, 1, 2, 0},
+        {1, 0, 3, 0},
+        {2, 3, 0, 4},
+        {0, 0, 4, 0},
         {0, 0, 0}};
-    CHECK_THROWS(g.loadGraph(graph33)); // Ensure exception for non-square matrix
+    CHECK_THROWS(g.loadGraph(graph34)); // Ensure exception for non-square matrix
 
     //Matrix with inconsistent data (invalid graph)
-    vector<vector<int>> graph34 = {
+    vector<vector<int>> graph35 = {
         {0, 1, 2},
         {1, 0, 3, 0}, // Extra element
         {2, 3, 0}}; // Correct length but inconsistent with the second row
-    CHECK_THROWS(g.loadGraph(graph34)); // Ensure exception for inconsistent data
+    CHECK_THROWS(g.loadGraph(graph35)); // Ensure exception for inconsistent data
 }
 TEST_CASE("Test negativeCycle")
 {
     ariel::Graph g;
     //my test to this function
     //Directed graph with a negative cycle
-    vector<vector<int>> graph35 = {
+    vector<vector<int>> graph36 = {
         {0, -1, 0},
         {0, 0, -2},
         {1, 0, 0}};
-    g.loadGraph(graph35);
+    g.loadGraph(graph36);
     CHECK(ariel::Algorithms::negativeCycle(g) == "Graph contains a negative cycle"); // Detect negative cycle
 
     //Directed graph without negative cycle
-    vector<vector<int>> graph36 = {
+    vector<vector<int>> graph37 = {
         {0, 1, 0},
         {0, 0, 2},
         {0, 0, 0}};
-    g.loadGraph(graph36);
+    g.loadGraph(graph37);
     CHECK(ariel::Algorithms::negativeCycle(g) == "Graph does not contain a negative cycle"); // No negative cycle
 
     //Undirected graph with a negative cycle
-    vector<vector<int>> graph37 = {
+    vector<vector<int>> graph38 = {
         {0, -1, -1},
         {-1, 0, 1},
         {-1, 1, 0}};
-    g.loadGraph(graph37);
+    g.loadGraph(graph38);
     CHECK(ariel::Algorithms::negativeCycle(g) == "Graph contains a negative cycle"); // Detect negative cycle
 
     //Undirected graph without negative cycle
-    vector<vector<int>> graph38 = {
+    vector<vector<int>> graph39 = {
         {0, 1, 0},
         {1, 0, 1},
         {0, 1, 0}};
-    g.loadGraph(graph38);
+    g.loadGraph(graph39);
     CHECK(ariel::Algorithms::negativeCycle(g) == "Graph does not contain a negative cycle"); // No negative cycle
 }

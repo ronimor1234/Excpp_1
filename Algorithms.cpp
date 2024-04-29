@@ -146,7 +146,7 @@ namespace ariel {
         return oss.str(); // Return the reconstructed path
     }
 
-    // // DFS-based cycle detection for undirected and directed graphs
+    // DFS-based cycle detection for undirected and directed graphs
 
     bool isCycleDFS(const std::vector<std::vector<int>>& adj, std::vector<bool>& visited, std::vector<bool>& recStack, std::vector<int>& path, std::vector<int>::size_type node, std::vector<int>::size_type parent, std::string& cycleStr, bool isUndirected) {
         if (recStack[node] && (!isUndirected || node != parent)) { // Check recursion stack for cycle
