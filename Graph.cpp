@@ -83,5 +83,5 @@ namespace ariel {
     const std::vector<std::vector<int>>& Graph::getAdjMatrix() const {
         return adjMatrix; // Return the adjacency matrix
     }
-
+    
 }

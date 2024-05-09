@@ -221,5 +221,16 @@ int main()
         {0, 2, 0}};
     g.loadGraph(graph10); // Load the graph to the object.
     g.printGraph();
+    cout << Algorithms::isContainsCycle(g) << endl;
+    cout << Algorithms::negativeCycle(g) << endl;
+    std::cout << "\n";
+
+    vector<vector<int>> graph11 = {
+      {0, -2, -3},
+        {-1, 0, -1},
+        {0, -2, 0}};
+    g.loadGraph(graph11); // Load the graph to the object.
+    g.printGraph();
+    cout << Algorithms::isContainsCycle(g) << endl;
     cout << Algorithms::negativeCycle(g) << endl;
 }

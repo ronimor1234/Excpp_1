@@ -13,11 +13,12 @@ namespace ariel {
 
         // Private method to ensure the adjacency matrix is square
         void validateMatrix(const std::vector<std::vector<int>>& matrix) const;
-
-        // Private method to check if the adjacency matrix is symmetric
+    
+    public:
+        //method to check if the adjacency matrix is symmetric
         bool isSymmetric(const std::vector<std::vector<int>>& matrix) const;
 
-    public:
+    
         // Default constructor
         Graph(); 
         
