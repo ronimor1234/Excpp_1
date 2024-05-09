@@ -1,9 +1,13 @@
+#//ID: 208018028, Mail: ronimordechai70@gmail.com
 # Compiler and flags for C++
-CXX = g++  # Or g++
+CXX = g++  
 CXXFLAGS = -std=c++11 -Wall -Wextra -Werror -Wsign-conversion  # Default flags
 
 # Valgrind settings for memory leak checks
 VALGRIND_FLAGS = -v --leak-check=full --show-leak-kinds=all --error-exitcode=99
+
+# Clang-tidy flags for code analysis
+CLANG_TIDY_FLAGS = -checks='*' -warnings-as-errors='*'  # Enable all checks, treat warnings as errors
 
 # Source files and object files
 DEMO_SOURCES = Demo.cpp Graph.cpp Algorithms.cpp
@@ -38,3 +42,12 @@ TestCounter.o: TestCounter.cpp
 # Clean up object files and executables
 clean:
 	rm -f *.o demo test
+
+# Tidy up the codebase using clang-tidy
+tidy:
+	@echo "Running clang-tidy..."
+	clang-tidy $(DEMO_SOURCES) $(TEST_SOURCES) $(CLANG_TIDY_FLAGS) --fix --quiet
+
+# Run Valgrind to check for memory leaks
+valgrind:
+	valgrind $(VALGRIND_FLAGS) ./demo

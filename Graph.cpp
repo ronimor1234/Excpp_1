@@ -15,7 +15,7 @@ namespace ariel {
     }
 
     // Validates that the given adjacency matrix is square
-    void Graph::validateMatrix(const std::vector<std::vector<int>>& matrix) const {
+    void Graph::validateMatrix(const std::vector<std::vector<int>>& matrix) {
         size_t rowCount = matrix.size(); // Get the number of rows
         for (const auto& row : matrix) {
             if (row.size() != rowCount) { // Ensure each row has the same number of columns
@@ -25,7 +25,7 @@ namespace ariel {
     }
 
     // Checks if the adjacency matrix is symmetric, indicating an undirected graph
-    bool Graph::isSymmetric(const std::vector<std::vector<int>>& matrix) const {
+    bool Graph::isSymmetric(const std::vector<std::vector<int>>& matrix) {
         size_t size = matrix.size();
         for (size_t i = 0; i < size; i++) { // Iterate through the rows
             for (size_t j = 0; j < size; j++) { // Iterate through the columns

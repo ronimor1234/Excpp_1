@@ -12,11 +12,11 @@ namespace ariel {
         bool isUndirected; // New property to store if the graph is undirected
 
         // Private method to ensure the adjacency matrix is square
-        void validateMatrix(const std::vector<std::vector<int>>& matrix) const;
+        static void validateMatrix(const std::vector<std::vector<int>>& matrix) ;
     
     public:
         //method to check if the adjacency matrix is symmetric
-        bool isSymmetric(const std::vector<std::vector<int>>& matrix) const;
+        static bool isSymmetric(const std::vector<std::vector<int>>& matrix) ;
 
     
         // Default constructor

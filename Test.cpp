@@ -54,7 +54,7 @@ TEST_CASE("Test isConnected")
         {1, 0, 1, 0, 0},
         {1, -1, 0, -1, 0},
         {0, 0, 1, 0, 0},
-        {-2, 0, 0, 0, -10}};
+        {-2, 0, 0, 0, -11}};
     g.loadGraph(graph5);
     CHECK(ariel::Algorithms::isConnected(g) == false);
 
@@ -65,7 +65,7 @@ TEST_CASE("Test isConnected")
         {1, 0, 1, 0, 0},
         {1, -1, 0, -1, 0},
         {0, 0, 0, 0, 0},
-        {-2, 0, 0, 0, -10}};
+        {-2, 0, 0, 0, -11}};
     g.loadGraph(graph6);
     CHECK(ariel::Algorithms::isConnected(g) == false);
 
@@ -90,7 +90,7 @@ TEST_CASE("Test isConnected")
 
     //single vertex with self loop
     vector<vector<int>> graph9 = {
-        {-5}};
+        {-6}};
     g.loadGraph(graph9);
     CHECK(ariel::Algorithms::isConnected(g) == true);
 }
@@ -216,27 +216,28 @@ TEST_CASE("Test isContainsCycle")
         {0, 0, 0, 0},
         {1, 0, -1, 0},
         {0, 1, 0, 1},
-        {-10, 0, 1, 0}};
+        {-11, 0, 1, 0}};
     g.loadGraph(graph23);
     CHECK(ariel::Algorithms::isContainsCycle(g) == "The cycle is: 2->3->2"); // Cycle with negative edge
 
     //Graph with mixed positive and negative edges in unsymatrical matrix.
+    // graph with negative and positive cycles, so it will print the negative becouse it is check it first.
     std::vector<std::vector<int>> graph24 = {
         {0, 1, -3, 0},
         {1, 0, -2, 0},
         {-3, -2, 0, 1},
-        {-10, 0, 1, 0}};
+        {-11, 0, 1, 0}};
     g.loadGraph(graph24);
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "The cycle is: 0->1->0"); 
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "Graph contains a negative cycle: 2->0->2"); 
 
-    //Graph with all negative edges in unsymatrical matrix, so in this case it will be 0.
+    //Graph with all negative edges in unsymatrical matrix, so there is a negative cycle and it will print him.
     std::vector<std::vector<int>> graph25 = {
         {0, -1, -3, 0},
         {-1, 0, -2, 0},
         {-3, -2, 0, -1},
         {-10, 0, -1, 0}};
     g.loadGraph(graph25);
-    CHECK(ariel::Algorithms::isContainsCycle(g) == "0");
+    CHECK(ariel::Algorithms::isContainsCycle(g) == "Graph contains a negative cycle: 2->3->2");
 }
 TEST_CASE("Test isBipartite")
 {
@@ -261,8 +262,8 @@ TEST_CASE("Test isBipartite")
         {0, 1, 2, 0, 0},
         {1, 0, 3, 0, 0},
         {2, 3, 0, 4, 0},
-        {0, 0, 4, 0, 5},
-        {0, 0, 0, 5, 0}};
+        {0, 0, 4, 0, 6},
+        {0, 0, 0, 6, 0}};
     g.loadGraph(graph28);
     CHECK(ariel::Algorithms::isBipartite(g) == "0");
 
@@ -309,7 +310,7 @@ TEST_CASE("Test invalid graph")
         {1, 0, 3, 0},
         {2, 3, 0, 4},
         {0, 0, 4, 0},
-        {0, 0, 0, 5}};
+        {0, 0, 0, 6}};
     CHECK_THROWS(g.loadGraph(graph33));
 
     //my test to this function
@@ -337,9 +338,9 @@ TEST_CASE("Test negativeCycle")
     vector<vector<int>> graph36 = {
         {0, -1, 0},
         {0, 0, -2},
-        {1, 0, 0}};
+        {-1, 0, 0}};
     g.loadGraph(graph36);
-    CHECK(ariel::Algorithms::negativeCycle(g) == "Graph contains a negative cycle"); // Detect negative cycle
+    CHECK(ariel::Algorithms::negativeCycle(g) == "Graph contains a negative cycle: 1->0->2->1"); // Detect negative cycle
 
     //Directed graph without negative cycle
     vector<vector<int>> graph37 = {
@@ -355,7 +356,7 @@ TEST_CASE("Test negativeCycle")
         {-1, 0, 1},
         {-1, 1, 0}};
     g.loadGraph(graph38);
-    CHECK(ariel::Algorithms::negativeCycle(g) == "Graph contains a negative cycle"); // Detect negative cycle
+    CHECK(ariel::Algorithms::negativeCycle(g) == "Graph contains a negative cycle: 1->0->1"); // Detect negative cycle
 
     //Undirected graph without negative cycle
     vector<vector<int>> graph39 = {
@@ -364,4 +365,15 @@ TEST_CASE("Test negativeCycle")
         {0, 1, 0}};
     g.loadGraph(graph39);
     CHECK(ariel::Algorithms::negativeCycle(g) == "Graph does not contain a negative cycle"); // No negative cycle
+
+    //Undirected graph with negative cycle
+    vector<vector<int>> graph40 = {
+        {0, 1, -2, 0, 0, -1}, 
+        {1, 0, -1, 0, 0, 2}, 
+        {-2, -1, 0, 4, 0, -3}, 
+        {0, 0, 4, 0, 6, 1}, 
+        {0, 0, 0, 6, 0, 8}, 
+        {1, -6, -6, 8, 11, 0}};
+    g.loadGraph(graph40);
+    CHECK(ariel::Algorithms::negativeCycle(g) == "Graph contains a negative cycle: 2->5->2");
 }

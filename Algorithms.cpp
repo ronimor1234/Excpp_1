@@ -27,7 +27,8 @@ namespace ariel {
             std::size_t current = stack.top();
             stack.pop();
 
-            if (visited[current]) continue;
+            if (visited[current]) { continue;
+            }
 
             visited[current] = true;
 
@@ -95,36 +96,33 @@ namespace ariel {
         std::vector<double> distances(numVertices, std::numeric_limits<double>::max()); // Correct initialization
         distances[static_cast<IndexType>(start)] = 0; // Start with the source vertex
 
-        //check if there is a negative cycle.
-        if (negativeCycle(adj)== "Graph contains a negative cycle"){
-            return "Graph contains a negative cycle so there is no shortest path";
+        
+        // Bellman-Ford edge relaxation(i thoughtto use the function negativeCycle instead to run again BF but its not work becouse i need the BF for the shortestpath)
+        for (IndexType k = 0; k < numVertices - 1; ++k) {
+            for (IndexType i = 0; i < numVertices; ++i) { // Loop through all vertices
+                for (IndexType j = 0; j < numVertices; ++j) { // Loop through all edges
+                    if (adj[i][j] != 0 && distances[i] < std::numeric_limits<double>::max()) { // Valid edge check
+                        double newDist = distances[i] + adj[i][j]; // Calculate new distance
+                        if (newDist < distances[j]) { // Edge relaxation logic
+                            distances[j] = newDist;
+                            prev[static_cast<IndexType>(j)] = static_cast<int>(i); // Correct predecessor update
+                        }
+                    }
+                }
+            }
         }
-        // // Bellman-Ford edge relaxation
-        // for (IndexType k = 0; k < numVertices - 1; ++k) {
-        //     for (IndexType i = 0; i < numVertices; ++i) { // Loop through all vertices
-        //         for (IndexType j = 0; j < numVertices; ++j) { // Loop through all edges
-        //             if (adj[i][j] != 0 && distances[i] < std::numeric_limits<double>::max()) { // Valid edge check
-        //                 double newDist = distances[i] + adj[i][j]; // Calculate new distance
-        //                 if (newDist < distances[j]) { // Edge relaxation logic
-        //                     distances[j] = newDist;
-        //                     prev[static_cast<IndexType>(j)] = static_cast<int>(i); // Correct predecessor update
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
 
-        // // Check for negative cycles
-        // for (IndexType i = 0; i < numVertices; ++i) {
-        //     for (IndexType j = 0; j < numVertices; ++j) {
-        //         if (adj[i][j] != 0 && distances[i] < std::numeric_limits<double>::max()) {
-        //             double newDist = distances[i] + adj[i][j];
-        //             if (newDist < distances[j]) { // Proper cycle detection logic
-        //                 return "Graph contains a negative cycle so there is no shortest path"; // General negative cycle indication
-        //             }
-        //         }
-        //     }
-        // }
+        // Check for negative cycles
+        for (IndexType i = 0; i < numVertices; ++i) {
+            for (IndexType j = 0; j < numVertices; ++j) {
+                if (adj[i][j] != 0 && distances[i] < std::numeric_limits<double>::max()) {
+                    double newDist = distances[i] + adj[i][j];
+                    if (newDist < distances[j]) { // Proper cycle detection logic
+                        return "Graph contains a negative cycle so there is no shortest path"; // General negative cycle indication
+                    }
+                }
+            }
+        }
 
         // Check if there's a valid path
         if (prev[static_cast<IndexType>(end)] == -1) {
@@ -150,7 +148,8 @@ namespace ariel {
 
         return oss.str(); // Return the reconstructed path
     }
-    // DFS-based cycle detection for undirected and directed graphs
+
+    //DFS-based cycle detection for undirected and directed graphs
     bool isCycleDFS(const std::vector<std::vector<int>>& adj, std::vector<bool>& visited, std::vector<bool>& recStack, std::vector<int>& path, std::vector<int>::size_type node, std::vector<int>::size_type parent, std::string& cycleStr, bool isUndirected) {
         if (recStack[node] && (!isUndirected || node != parent)) { // Check recursion stack for cycle
             // Find the cycle path
@@ -228,7 +227,7 @@ namespace ariel {
                     q.pop();
 
                     for (IndexType j = 0; j < adj[node].size(); ++j) {
-                        if (adj[node][j]) { // There's an edge
+                        if (adj[node][j] != 0) { // There's an edge
                             if (colors[j] == -1) { // Uncolored
                                 colors[j] = 1 - colors[node]; // Flip color
                                 q.push(j);
@@ -242,7 +241,8 @@ namespace ariel {
         }
 
         std::string result;
-        std::string group1, group2;
+        std::string group1;
+        std::string group2;
 
         for (IndexType i = 0; i < numVertices; ++i) {
             if (colors[i] == 0) {
@@ -265,8 +265,8 @@ namespace ariel {
     }
 
     std::string Algorithms::negativeCycle(const Graph& g) {
-        const auto& adj = g.getAdjMatrix(); // Adjacency matrix
-            size_t numVertices = adj.size(); // Number of vertices in the graph
+        const auto& adj = g.getAdjMatrix();
+            size_t numVertices = adj.size(); // Number of vertices
 
             // Determine if the graph is undirected
             bool isUndirected = g.isUndirectedGraph();
@@ -280,7 +280,7 @@ namespace ariel {
             for (size_t k = 0; k < numVertices - 1; ++k) {
                 for (size_t i = 0; i < numVertices; ++i) {
                     for (size_t j = 0; j < numVertices; ++j) {
-                        if (adj[i][j] != 0 && distances[i] != std::numeric_limits<int>::max() &&
+                        if (adj[i][j] < 0 && distances[i] != std::numeric_limits<int>::max() &&
                             distances[j] > distances[i] + adj[i][j]) {
                             distances[j] = distances[i] + adj[i][j];
                             predecessors[j] = static_cast<int>(i); // Store the predecessor
@@ -292,9 +292,9 @@ namespace ariel {
             // Check for negative cycles with one more iteration
             for (size_t i = 0; i < numVertices; ++i) {
                 for (size_t j = 0; j < numVertices; ++j) {
-                    if (adj[i][j] != 0 && distances[i] != std::numeric_limits<int>::max() &&
+                    if (adj[i][j] < 0 && distances[i] != std::numeric_limits<int>::max() &&
                         distances[j] > distances[i] + adj[i][j]) {
-                        // A negative cycle detected, let's trace it
+                        // Possible negative cycle detected, let's trace it
                         std::vector<size_t> cycle;
                         std::vector<bool> visited(numVertices, false);
                         size_t cycleStart = j;
@@ -305,26 +305,26 @@ namespace ariel {
                             cycleStart = static_cast<size_t>(predecessors[cycleStart]);
                         }
 
-                        // Build the cycle starting from where the repetition began
+                        // Build the cycle from where the repetition began
                         size_t current = cycleStart;
                         do {
                             cycle.push_back(current);
                             current = static_cast<size_t>(predecessors[current]);
                         } while (current != cycleStart);
 
-                        // Check for valid cycle in undirected graph
+                        // If the graph is undirected, ensure it's a valid cycle
                         if (isUndirected) {
-                            bool isInvalidCycle = false;
-                            for (size_t i = 0; i < cycle.size(); ++i) {
-                                size_t from = cycle[i];
-                                size_t to = cycle[(i + 1) % cycle.size()]; // Next vertex
-                                if (adj[to][from] != 0) { // If there's a reverse edge
-                                    isInvalidCycle = true;
+                            bool validCycle = false;
+                            for (const size_t& node : cycle) {
+                                size_t predecessor = static_cast<size_t>(predecessors[node]); // Corrected type
+                                if (adj[node][predecessor] < 0) { // Check for negative edge
+                                    validCycle = true;
                                     break;
                                 }
                             }
-                            if (isInvalidCycle) {
-                                continue; // Skip invalid cycle in undirected graph
+
+                            if (!validCycle) {
+                                continue; // If not a valid negative cycle, skip it
                             }
                         }
 
@@ -339,7 +339,7 @@ namespace ariel {
                 }
             }
 
-            return "Graph does not contain a negative cycle"; // If no valid negative cycle found
+        return "Graph does not contain a negative cycle"; // If no valid negative cycle found
     }
          
 } // namespace ariel
