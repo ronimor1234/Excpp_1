@@ -1,4 +1,7 @@
 #//ID: 208018028, Mail: ronimordechai70@gmail.com
+#**note : when i do the commend 'make tidy' i get warnings only on magic number on the numbers in the matrixs in the demo and in the test, so its fine becouse it is need to be a number and not a const. 
+# Another importent thing is that the valgrind not install correctly to me computer so its not working when i am wirte- 'make valdgind', but in this task there is no need to be a memoery leak becouse there is no dynamic allocation.
+
 # Compiler and flags for C++
 CXX = g++  
 CXXFLAGS = -std=c++11 -Wall -Wextra -Werror -Wsign-conversion  # Default flags

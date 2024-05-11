@@ -1,17 +1,19 @@
 //ID: 208018028, Mail: ronimordechai70@gmail.com
 #include "Graph.hpp"
 #include <iostream> // For std::cout
-
+/*
+ * The function get const vector becouse we dont want to change the vector that we get.
+ */
 namespace ariel {
 
     // Default constructor for an empty graph with no vertices
     Graph::Graph() : adjMatrix(0, std::vector<int>(0)), isUndirected(true) {}
 
-    // Constructor to initialize a graph with a given adjacency matrix
+    // Constructor to initialize a graph with a given adjacency matrix. 
     Graph::Graph(const std::vector<std::vector<int>>& matrix) {
-        validateMatrix(matrix); // Validate that the matrix is square
-        adjMatrix = matrix; // Assign the provided matrix to the graph
-        isUndirected = isSymmetric(matrix); // Determine if the graph is undirected or directed
+        validateMatrix(matrix); // Validate that the matrix is square 
+        adjMatrix = matrix; // Assign the provided matrix to the graph-initialization of data member.
+        isUndirected = isSymmetric(matrix); // Determine if the graph is undirected or directed-initialization of data member.
     }
 
     // Validates that the given adjacency matrix is square
@@ -25,7 +27,7 @@ namespace ariel {
     }
 
     // Checks if the adjacency matrix is symmetric, indicating an undirected graph
-    bool Graph::isSymmetric(const std::vector<std::vector<int>>& matrix) {
+    auto Graph::isSymmetric(const std::vector<std::vector<int>>& matrix) -> bool {
         size_t size = matrix.size();
         for (size_t i = 0; i < size; i++) { // Iterate through the rows
             for (size_t j = 0; j < size; j++) { // Iterate through the columns
@@ -44,14 +46,14 @@ namespace ariel {
         isUndirected = isSymmetric(newMatrix); // Determine if the graph is undirected or directed
     }
 
-    // Determines if the graph is undirected
-    bool Graph::isUndirectedGraph() const {
+    // Determines if the graph is undirected, it is const becouse we dont want the function will change the current data member of the object.
+    auto Graph::isUndirectedGraph() const -> bool {
         return isUndirected; // Return whether the graph is undirected
     }
 
-    // Prints the number of vertices and edges in the graph
+    // Prints the number of vertices and edges in the graph, it is const becouse we dont want the function will change the current data in the vector.
     void Graph::printGraph() const {
-        size_t vertices = adjMatrix.size(); // Get the number of vertices
+        size_t vertices = adjMatrix.size(); // Get the number of vertices (the number of row)
         int edges = 0;
 
         // Check if the graph is undirected or directed
@@ -80,8 +82,8 @@ namespace ariel {
     }
 
     // Returns the adjacency matrix of the graph
-    const std::vector<std::vector<int>>& Graph::getAdjMatrix() const {
+    auto Graph::getAdjMatrix() const -> const std::vector<std::vector<int>>& {
         return adjMatrix; // Return the adjacency matrix
     }
     
-}
+}  // namespace ariel // namespace ariel

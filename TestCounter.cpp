@@ -9,7 +9,7 @@ int return_code = -1;
 
 struct ReporterCounter : public ConsoleReporter
 {
-    ReporterCounter(const ContextOptions &input_options)
+    explicit explicit ReporterCounter(const ContextOptions &input_options)
         : ConsoleReporter(input_options) {}
 
     void test_run_end(const TestRunStats &run_stats) override
@@ -28,7 +28,7 @@ struct ReporterCounter : public ConsoleReporter
 
 REGISTER_REPORTER("counter", 1, ReporterCounter);
 
-int main(int argc, char **argv)
+auto main(int  /*argc*/, char ** /*argv*/) -> int
 {
     Context context;
     context.addFilter("reporters", "counter");

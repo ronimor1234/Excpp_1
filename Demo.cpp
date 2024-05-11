@@ -5,14 +5,14 @@
 
 #include "Graph.hpp"
 #include "Algorithms.hpp"
-using ariel::Algorithms;
-
 #include <iostream>
 #include <stdexcept>
 #include <vector>
-using namespace std;
 
-int main()
+using namespace std;
+using ariel::Algorithms;
+
+auto main() -> int
 {
     ariel::Graph g;
     // 3x3 matrix that represents a connected graph.
@@ -98,7 +98,8 @@ int main()
         cout << e.what() << endl; // Should print: "Invalid graph: The graph is not a square matrix."
     }
     std::cout << "\n";
-    //my demo test:
+
+    //My demo test:
 
     // 5x5 matrix that reprsents a connected with negative weighted graph.
     // this matrix is symmetric so its will be undirected graph.
@@ -218,7 +219,7 @@ int main()
     // this graph contain cycle that equals to 0 (it is not consider negative). 
     std::cout << "Test to graph10:" << endl;
     vector<vector<int>> graph10 = {
-      {0, -2, 3},
+        {0, -2, 3},
         {1, 0, -1},
         {3, 5, 0}};
     g.loadGraph(graph10); // Load the graph to the object.
@@ -229,6 +230,4 @@ int main()
     cout << Algorithms::isContainsCycle(g) << endl;     // Should print:"The cycle is: 0->2->0"
     std::cout << "isBipartite: ";
     cout << Algorithms::negativeCycle(g) << endl;      // Should print: "Graph does not contain a negative cycle"
-    std::cout << "\n";
-
 }

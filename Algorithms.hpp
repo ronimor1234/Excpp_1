@@ -1,9 +1,11 @@
 //ID: 208018028, Mail: ronimordechai70@gmail.com
 #ifndef ALGORITHMS_HPP
 #define ALGORITHMS_HPP
-
 #include "Graph.hpp"
 #include <string>
+/*
+ *  All the functions are declared as static, becouse these functions belong to the class itself and not to any specific instance of the class.
+ */
 
 namespace ariel {
     class Algorithms {
